@@ -11,6 +11,11 @@
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
+            display: flex;           /* Make body a flex container */
+            flex-direction: column;  /* Stack children vertically */
+            justify-content: center; /* Center children vertically */
+            align-items: center;     /* Center children horizontally */
+            height: 100vh;           /* Ensure body takes up full viewport height */
         }
 
         .container {
@@ -28,6 +33,7 @@
 
         h1 {
             margin: 0;
+            font-size: 36px;
         }
     </style>
 </head>
