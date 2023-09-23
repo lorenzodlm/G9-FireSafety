@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -60,7 +61,8 @@
             background-color: #ffffff;
         }
 
-        .listing-section,.cart-section {
+        .listing-section,
+        .cart-section {
             width: 100%;
             float: left;
             padding: 1%;
@@ -100,16 +102,45 @@
             border-radius: 2%;
         }
 
-        #image-1{background-image: url('1kgCO2.jpg');}
-        #image-2{background-image: url('3kgCO2.jpg');}
-        #image-3{background-image: url('6kgCO2.jpg');}
-        #image-4{background-image: url('1kgABCDryPowder.jpg');}
-        #image-5{background-image: url('3kgABCDryPowder.jpg');}
-        #image-6{background-image: url('6kgABCDryPowder.jpg');}
-        #image-7{background-image: url('9kgABCDryPowder.jpg');}
-        #image-8{background-image: url('6LWaterFire.jpg');}
-        #image-9{background-image: url('9LWaterFire.jpg');}
-        #image-10{background-image: url('smokedetector1.jpg');}
+        #image-1 {
+            background-image: url('1kgCO2.jpg');
+        }
+
+        #image-2 {
+            background-image: url('3kgCO2.jpg');
+        }
+
+        #image-3 {
+            background-image: url('6kgCO2.jpg');
+        }
+
+        #image-4 {
+            background-image: url('1kgABCDryPowder.jpg');
+        }
+
+        #image-5 {
+            background-image: url('3kgABCDryPowder.jpg');
+        }
+
+        #image-6 {
+            background-image: url('6kgABCDryPowder.jpg');
+        }
+
+        #image-7 {
+            background-image: url('9kgABCDryPowder.jpg');
+        }
+
+        #image-8 {
+            background-image: url('6LWaterFire.jpg');
+        }
+
+        #image-9 {
+            background-image: url('9LWaterFire.jpg');
+        }
+
+        #image-10 {
+            background-image: url('smokedetector1.jpg');
+        }
 
         .text-box {
             width: 100%;
@@ -119,7 +150,8 @@
             padding: 1em;
         }
 
-        h2,h3 {
+        h2,
+        h3 {
             float: left;
             font-family: 'Roboto', sans-serif;
             font-size: 1em;
@@ -127,7 +159,8 @@
             margin: 0 auto;
         }
 
-        .item,.price {
+        .item,
+        .price {
             clear: left;
             width: 100%;
             text-align: center;
@@ -137,7 +170,10 @@
             color: Grey;
         }
 
-        .description,label,button,input {
+        .description,
+        label,
+        button,
+        input {
             float: left;
             clear: left;
             width: 100%;
@@ -185,7 +221,8 @@
             background-color: #fdf;
         }
 
-        .table-heading,.table-content {
+        .table-heading,
+        .table-content {
             width: 75%;
             display: flex;
             margin: 1% 12.25%;
@@ -251,7 +288,8 @@
             text-align: center;
         }
 
-        .cart-price h3,.cart-total h3 {
+        .cart-price h3,
+        .cart-total h3 {
             margin: 3.2em 5% 3.2em 20%;
             width: 60%;
         }
@@ -331,6 +369,7 @@
         }
     </style>
 </head>
+
 <body>
     <header>
         <h1>FireSafety</h1>
@@ -342,7 +381,144 @@
             <a href="#">Log In</a>
         </nav>
     </header>
+    <script>
+        let cart = [];
+
+        // Function to add a product to the cart
+        function addToCart(productId, productName, productPrice, productImage, quantity) {
+            // Check if product already exists in cart
+            const existingProduct = cart.find(item => item.productId === productId);
+
+            if (existingProduct) {
+                // Update the quantity of the existing product
+                existingProduct.quantity += quantity;
+            } else {
+                // Add new product to the cart
+                cart.push({
+                    productId,
+                    productName,
+                    productPrice,
+                    productImage,
+                    quantity
+                });
+            }
+
+            updateCartDisplay();
+        }
+
+        function updateCartDisplay() {
+            renderCartItems();
+            const total = calculateCartTotal();
+            const totalElement = document.querySelector('.final-cart-total h3.price');
+            totalElement.textContent = `${total}THB`;
+        }
+
+        function calculateCartTotal() {
+            let total = 0;
+            cart.forEach(item => {
+                total += item.productPrice * item.quantity;
+            });
+            return total;
+        }
+
+        function removeFromCart(productId) {
+            const index = cart.findIndex(item => item.productId === productId);
+            if (index !== -1) {
+                cart.splice(index, 1);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const buttons = document.querySelectorAll('button[id$="-button"]');
+            buttons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const productId = parseInt(this.id.split('-')[1]);
+                    const productElement = this.closest('.product');
+                    const productName = productElement.querySelector('.item').textContent;
+                    const productPrice = parseFloat(productElement.querySelector('.price').textContent.replace('THB', ''));
+                    const productImage = productElement.querySelector('.images').style.backgroundImage.split('"')[1];
+                    const quantity = parseInt(productElement.querySelector('input[type="text"]').value);
+                    addToCart(productId, productName, productPrice, productImage, quantity);
+                });
+            });
+        });
+
+        function renderCartItems() {
+            const cartContent = document.querySelector('.cart-section');
+            const tableHeading = document.querySelector('.table-heading');
+            const existingItems = document.querySelectorAll('.table-content');
+            existingItems.forEach(item => item.remove());
+
+            cart.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.classList.add('table-content');
+
+                const productDiv = document.createElement('div');
+                productDiv.classList.add('cart-product');
+
+                const imageBox = document.createElement('div');
+                imageBox.classList.add('cart-image-box');
+                const imageDiv = document.createElement('div');
+                imageDiv.classList.add('cart-images');
+                imageDiv.style.backgroundImage = `url('${item.productImage}')`;
+                imageBox.appendChild(imageDiv);
+
+                const itemName = document.createElement('h2');
+                itemName.classList.add('cart-item');
+                itemName.textContent = item.productName;
+
+                const itemDescription = document.createElement('p');
+                itemDescription.classList.add('cart-description');
+                itemDescription.textContent = item.productName;
+
+                productDiv.appendChild(imageBox);
+                productDiv.appendChild(itemName);
+                productDiv.appendChild(itemDescription);
+
+                const priceDiv = document.createElement('div');
+                priceDiv.classList.add('cart-price');
+                const price = document.createElement('h3');
+                price.classList.add('price');
+                price.textContent = `${item.productPrice}THB`;
+                priceDiv.appendChild(price);
+
+                const quantityDiv = document.createElement('div');
+                quantityDiv.classList.add('cart-quantity');
+                const quantityInput = document.createElement('input');
+                quantityInput.name = `cart-${item.productId}-quantity`;
+                quantityInput.type = 'text';
+                quantityInput.value = item.quantity;
+                quantityDiv.appendChild(quantityInput);
+
+                const totalDiv = document.createElement('div');
+                totalDiv.classList.add('cart-total');
+                const totalPrice = document.createElement('h3');
+                totalPrice.classList.add('price');
+                totalPrice.textContent = `${item.productPrice * item.quantity}THB`;
+                totalDiv.appendChild(totalPrice);
+
+                cartItem.appendChild(productDiv);
+                cartItem.appendChild(priceDiv);
+                cartItem.appendChild(quantityDiv);
+                cartItem.appendChild(totalDiv);
+
+                cartContent.insertBefore(cartItem, tableHeading.nextSibling);
+
+                const removeButton = document.createElement('button');
+                removeButton.classList.add('remove');
+                removeButton.textContent = 'x';
+                removeButton.addEventListener('click', function () {
+                    removeFromCart(item.productId);
+                    updateCartDisplay();
+                });
+                totalDiv.appendChild(removeButton);
+            });
+        }
+
+
+    </script>
 </body>
+
 <div class="listing-section">
     <div class="product">
         <div class="image-box">
@@ -485,7 +661,7 @@
         <h2 class="cart-total">Total</h2>
     </div>
 
-    <div class="table-content">
+    <!-- <div class="table-content">
         <div class="cart-product">
             <div class="cart-image-box">
                 <div class="cart-images" id="image-2"></div>
@@ -543,7 +719,7 @@
             <h3 class="price">2000THB</h3>
             <button type="button" class="remove" name="remove-3" id="remove-3">x</button>
         </div>
-    </div>
+    </div> -->
 
     <div class="coupon">
         <input type="text" name="coupon" id="coupon" placeholder="COUPON CODE">
