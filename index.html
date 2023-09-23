@@ -18,14 +18,25 @@
             height: 100vh;           /* Ensure body takes up full viewport height */
         }
 
+        .big-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-top: 100px;
+            padding-bottom: 0px;
+            font-size: 72px;
+            top: 0;
+            position: fixed;
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            padding-top: 60px;
-            font-size: 72px;
-            top: 0;
-            position: fixed;
+            padding-top: 0px;
+            font-size: 30px;
+            /* top: 0; */
+            /* position: fixed; */
         }
 
         header {
@@ -67,6 +78,14 @@
         nav a:hover {
             background-color: #ffffff;
         }
+        
+        .top-background {
+            background: url('topbg.jpg') no-repeat center center; /* Replace with your image path */
+            background-size: cover; /* This will cover the entire viewport */
+            height: 650px; /* Adjust based on your needs */
+            width: 100%;
+        }
+
     </style>
 </head>
 <body>
@@ -79,9 +98,15 @@
             <a href="#">Book Online</a>
         </nav>
     </header>
-    <div class="container">
-        <!-- Content goes here -->
+
+    <div class="big-container">
         <p>Protect Your Business Today!</p>
     </div>
+
+    <div class="container">
+        <p>Different Types of Products to Cater for any Fire Risk</p>
+    </div>
+
+    <div class="top-background"></div>
 </body>
 </html>
