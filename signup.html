@@ -130,6 +130,7 @@
 </head>
 
 <body>
+
     <header>
         <h1>FireSafety</h1>
         <nav>
@@ -140,26 +141,56 @@
             <a href="login.html">Log In</a>
         </nav>
     </header>
-    <form action="#" method="post">
+
+    <script>
+        /*Checks if password has been correctly entered in both submission form boxes(c_password, confirm_password)*/
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form');
+
+            form.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                const c_password = form.querySelector('[name="password"]').value;
+                const confirm_password = form.querySelector('[name="confirm_password"]').value;
+
+                if (c_password !== confirm_password) {
+                    alert('Passwords do not match!');
+                    return;
+                }
+
+                // Check if the Business Customer checkbox is checked
+                const isa_BusinessCustomer = form.querySelector('[name="isa_businesscustomer"]').checked;
+
+                // Redirect to the appropriate page
+                if (isa_BusinessCustomer) {
+                    window.location.href = 'busUser_profile.html';
+                } else {
+                    window.location.href = 'user_profile.html';
+                }
+            });
+        });
+    </script>
+
+    <form action="signup.php" method="post">
         <label>
             First Name:
-            <input type="text" name="first_name" required>
+            <input type="text" name="c_firstname" required>
         </label>
         <label>
             Last Name:
-            <input type="text" name="last_name" required>
+            <input type="text" name="c_lastname" required>
         </label>
         <label>
             Email:
-            <input type="email" name="email" required>
+            <input type="email" name="c_email" required>
         </label>
         <label>
             Phone Number:
-            <input type="tel" name="phone_number" required>
+            <input type="tel" name="c_phonenum" required>
         </label>
         <label>
             Address:
-            <textarea name="address" rows="4" required></textarea>
+            <textarea name="c_address" rows="4" required></textarea>
         </label>
         <label>
             Password:
@@ -170,7 +201,7 @@
             <input type="password" name="confirm_password" required>
         </label>
         <label>
-            <input type="checkbox" name="business_customer">
+            <input type="checkbox" name="isa_businesscustomer">
             Business Customer
         </label>
         <button type="submit">Sign Up</button>

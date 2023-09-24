@@ -15,11 +15,11 @@
         margin: 0;
         padding: 0;
         background-color: #f4f4f4;
-        display: flex;           /* Make body a flex container */
-        flex-direction: column;  /* Stack children vertically */
-        justify-content: center; /* Center children vertically */
-        align-items: center;     /* Center children horizontally */
-        height: 100vh;           
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
     }
 
     .big-container {
@@ -32,7 +32,7 @@
         position: fixed;
         top: 0;
         left: 0;
-        
+
     }
 
     .container {
@@ -84,13 +84,6 @@
     nav a:hover {
         background-color: #ffffff;
     }
-    
-    .top-background {
-        background: url('topbg.jpg') no-repeat center center; /* Replace with your image path */
-        background-size: cover; /* This will cover the entire viewport */
-        height: 650px; /* Adjust based on your needs */
-        width: 100%;
-    }
 
     .text-box {
         width: 100%;
@@ -99,42 +92,42 @@
         border-radius: 0 0 2% 2%;
         padding: 1em;
     }
-
 </style>
 </head>
-<body>
-<header>
-    <h1>FireSafety</h1>
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="contact.html">Contact Us</a>
-        <a href="products.html">Products</a>
-        <a href="#">Book Online</a>
-        <a href="login.html">Log In</a>
-    </nav>
-</header>
 
 <body>
-    <h2>User Profile</h2>
-    <div id="user-info">
-        <!-- User information will be displayed here -->
-    </div>
-    <script>
-        // Example JavaScript code to retrieve and display user information
-        document.addEventListener("DOMContentLoaded", function () {
-            // Retrieve user information (you can replace this with actual data)
-            const userInfo = {
-                c_firstName: "Alan",
-                c_lastName: "Birds",
-                c_id: "111678",
-                c_email: "alan.birds@example.com",
-                c_phonenum: "099-123-5887",
-                c_address: "70 Udomsuk Bangkok, Thailand",
-            };
+    <header>
+        <h1>FireSafety</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="contact.html">Contact Us</a>
+            <a href="products.html">Products</a>
+            <a href="#">Book Online</a>
+            <a href="login.html">Log In</a>
+        </nav>
+    </header>
 
-            // Display user information in the "user-info" div
-            const userDiv = document.getElementById("user-info");
-            userDiv.innerHTML = `
+    <body>
+        <h2>User Profile</h2>
+        <div id="user-info">
+            <!-- User information will be displayed here -->
+        </div>
+        <script>
+            // Example JavaScript code to retrieve and display user information
+            document.addEventListener("DOMContentLoaded", function () {
+                // Retrieve user information (you can replace this with actual data)
+                const userInfo = {
+                    c_firstName: "Alan",
+                    c_lastName: "Birds",
+                    c_id: "111678",
+                    c_email: "alan.birds@example.com",
+                    c_phonenum: "099-123-5887",
+                    c_address: "70 Udomsuk Bangkok, Thailand",
+                };
+
+                // Display user information in the "user-info" div
+                const userDiv = document.getElementById("user-info");
+                userDiv.innerHTML = `
                 <p><strong>First Name:</strong> ${userInfo.c_firstName}</p>
                 <p><strong>Last Name:</strong> ${userInfo.c_lastName}</p>
                 <p><strong>Customer ID:</strong> ${userInfo.c_id}</p>
@@ -142,8 +135,8 @@
                 <p><strong>Phone Number:</strong> ${userInfo.c_phonenum}</p>
                 <p><strong>Address:</strong> ${userInfo.c_address}</p>
             `;
-        });
-    </script>
-</body>
+            });
+        </script>
+    </body>
 
 </html>

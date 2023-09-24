@@ -1,3 +1,26 @@
+<?php
+include 'dbconnect.php';
+
+// Assume the user is logged in and you have their email. In a real application, you would typically get this from a session variable.
+$email = 'user@example.com'; // Replace with the actual user email
+
+// Prepare SQL to get user information from the database
+$sql = "SELECT * FROM users WHERE email = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('s', $email);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Check if a user is found
+if ($result->num_rows > 0) {
+    $user = $result->fetch_assoc();
+} else {
+    die('User not found');
+}
+
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,6 +31,7 @@
 </head>
 
 <title>FireSafety Title</title>
+
 <style>
     /* Basic styling for the page */
     body {
@@ -107,37 +131,15 @@
     </header>
 
     <body>
-        <h2>Business Customer Profile</h2>
         <div id="user-info">
-            <!-- User information will be displayed here -->
+            <p><strong>First Name:</strong> <?php echo htmlspecialchars($user['c_firstname']); ?></p>
+            <p><strong>Last Name:</strong> <?php echo htmlspecialchars($user['c_lastname']); ?></p>
+            <p><strong>Email:</strong> <?php echo htmlspecialchars($user['c_email']); ?></p>
+            <p><strong>Phone Number:</strong> <?php echo htmlspecialchars($user['c_phonenum']); ?></p>
+            <p><strong>Address:</strong> <?php echo nl2br(htmlspecialchars($user['c_address'])); ?></p>
+            <!-- Display other user information as needed -->
         </div>
-        <script>
-            // Example JavaScript code to retrieve and display user information
-            document.addEventListener("DOMContentLoaded", function () {
-                // Retrieve user information (you can replace this with actual data)
-                const userInfo = {
-                    c_firstName: "Alan",
-                    c_lastName: "Birds",
-                    c_id: "111678",
-                    c_company: "JJ Hotel",
-                    c_email: "alan.birds@example.com",
-                    c_phonenum: "099-123-5887",
-                    c_address: "70 Udomsuk Bangkok, Thailand",
-                };
-
-                // Display user information in the "user-info" div
-                const userDiv = document.getElementById("user-info");
-                userDiv.innerHTML = `
-                <p><strong>First Name:</strong> ${userInfo.c_firstName}</p>
-                <p><strong>Last Name:</strong> ${userInfo.c_lastName}</p>
-                <p><strong>Customer ID:</strong> ${userInfo.c_id}</p>
-                <p><strong>Company Name:</strong> ${userInfo.c_company}</p>
-                <p><strong>Email:</strong> ${userInfo.c_email}</p>
-                <p><strong>Phone Number:</strong> ${userInfo.c_phonenum}</p>
-                <p><strong>Address:</strong> ${userInfo.c_address}</p>
-            `;
-            });
-        </script>
     </body>
 </body>
+
 </html>
