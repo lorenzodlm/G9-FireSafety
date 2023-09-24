@@ -1,3 +1,9 @@
+<?php
+session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -103,43 +109,43 @@
         }
 
         #image-1 {
-            background-image: url('1kgCO2.jpg');
+            background-image: url('Assets/1kgCO2.jpg');
         }
 
         #image-2 {
-            background-image: url('3kgCO2.jpg');
+            background-image: url('Assets/3kgCO2.jpg');
         }
 
         #image-3 {
-            background-image: url('6kgCO2.jpg');
+            background-image: url('Assets/6kgCO2.jpg');
         }
 
         #image-4 {
-            background-image: url('1kgABCDryPowder.jpg');
+            background-image: url('Assets/1kgABCDryPowder.jpg');
         }
 
         #image-5 {
-            background-image: url('3kgABCDryPowder.jpg');
+            background-image: url('Assets/3kgABCDryPowder.jpg');
         }
 
         #image-6 {
-            background-image: url('6kgABCDryPowder.jpg');
+            background-image: url('Assets/6kgABCDryPowder.jpg');
         }
 
         #image-7 {
-            background-image: url('9kgABCDryPowder.jpg');
+            background-image: url('Assets/9kgABCDryPowder.jpg');
         }
 
         #image-8 {
-            background-image: url('6LWaterFire.jpg');
+            background-image: url('Assets/6LWaterFire.jpg');
         }
 
         #image-9 {
-            background-image: url('9LWaterFire.jpg');
+            background-image: url('Assets/9LWaterFire.jpg');
         }
 
         #image-10 {
-            background-image: url('smokedetector1.jpg');
+            background-image: url('Assets/smokedetector1.jpg');
         }
 
         .text-box {
@@ -221,7 +227,8 @@
             background-color: #fdf;
         }
 
-        .table-heading,.table-content {
+        .table-heading,
+        .table-content {
             width: 75%;
             display: flex;
             margin: 1% 12.25%;
@@ -287,7 +294,8 @@
             text-align: center;
         }
 
-        .cart-price h3,.cart-total h3 {
+        .cart-price h3,
+        .cart-total h3 {
             margin: 3.2em 5% 3.2em 20%;
             width: 60%;
         }
@@ -372,11 +380,21 @@
     <header>
         <h1>FireSafety</h1>
         <nav>
-            <a href="index.html">Home</a>
-            <a href="contact.html">Contact Us</a>
-            <a href="products.html">Products</a>
+            <a href="index.php">Home</a>
+            <a href="contact.php">Contact Us</a>
+            <a href="products.php">Products</a>
             <a href="#">Book Online</a>
-            <a href="login.html">Log In</a>
+            <?php if (isset($_SESSION['userType'])) : ?>
+                <a href="<?php echo $_SESSION['userType']; ?>_profile.php">Profile</a>
+                <?php if ($_SESSION['userType'] == 'employee' || $_SESSION['userType'] == 'technician') : ?>
+                    <a href="databases.php">Databases</a>
+                <?php elseif ($_SESSION['userType'] == 'businesscustomer' || $_SESSION['userType'] == 'customer') : ?>
+                    <a href="orders.php">Orders</a>
+                <?php endif; ?>
+                <a href="logout.php">Log Out</a>
+            <?php else : ?>
+                <a href="login.php">Log In</a>
+            <?php endif; ?>
         </nav>
     </header>
     <script>
@@ -426,10 +444,10 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const buttons = document.querySelectorAll('button[id$="-button"]');
             buttons.forEach(button => {
-                button.addEventListener('click', function () {
+                button.addEventListener('click', function() {
                     const productId = parseInt(this.id.split('-')[1]);
                     const productElement = this.closest('.product');
                     const productName = productElement.querySelector('.item').textContent;
@@ -505,15 +523,13 @@
                 const removeButton = document.createElement('button');
                 removeButton.classList.add('remove');
                 removeButton.textContent = 'x';
-                removeButton.addEventListener('click', function () {
+                removeButton.addEventListener('click', function() {
                     removeFromCart(item.productId);
                     updateCartDisplay();
                 });
                 totalDiv.appendChild(removeButton);
             });
         }
-
-
     </script>
 </body>
 
@@ -659,76 +675,15 @@
         <h2 class="cart-total">Total</h2>
     </div>
 
-    <!-- <div class="table-content">
-        <div class="cart-product">
-            <div class="cart-image-box">
-                <div class="cart-images" id="image-2"></div>
-            </div>
-            <h2 class="cart-item">Class B</h2>
-            <p class="cart-description">CO2 3 KG</p>
-        </div>
-        <div class="cart-price">
-            <h3 class="price">1000THB</h3>
-        </div>
-        <div class="cart-quantity">
-            <input type="text" name="cart-1-quantity" id="cart-1-quantity" value="1">
-        </div>
-        <div class="cart-total">
-            <h3 class="price">1000THB</h3>
-            <button type="button" class="remove" name="remove-1" id="remove-1">x</button>
-        </div>
-    </div>
-
-    <div class="table-content">
-        <div class="cart-product">
-            <div class="cart-image-box">
-                <div class="cart-images" id="image-6"></div>
-            </div>
-            <h2 class="cart-item">Class ABC</h2>
-            <p class="cart-description">DRY POWDER 6 KG</p>
-        </div>
-        <div class="cart-price">
-            <h3 class="price">1500THB</h3>
-        </div>
-        <div class="cart-quantity">
-            <input type="text" name="cart-1-quantity" id="cart-1-quantity" value="2">
-        </div>
-        <div class="cart-total">
-            <h3 class="price">3000THB</h3>
-            <button type="button" class="remove" name="remove-2" id="remove-2">x</button>
-        </div>
-    </div>
-
-    <div class="table-content">
-        <div class="cart-product">
-            <div class="cart-image-box">
-                <div class="cart-images" id="image-8"></div>
-            </div>
-            <h2 class="cart-item">Class A</h2>
-            <p class="cart-description">WATER 6 L</p>
-        </div>
-        <div class="cart-price">
-            <h3 class="price">2000THB</h3>
-        </div>
-        <div class="cart-quantity">
-            <input type="text" name="cart-1-quantity" id="cart-1-quantity" value="1">
-        </div>
-        <div class="cart-total">
-            <h3 class="price">2000THB</h3>
-            <button type="button" class="remove" name="remove-3" id="remove-3">x</button>
-        </div>
-    </div> -->
-
     <div class="coupon">
         <input type="text" name="coupon" id="coupon" placeholder="COUPON CODE">
-        <!-- <button type="button" name="coupon" id="coupon">Submit</button> -->
     </div>
 
     <div class="checkout">
         <button type="button" name="update" id="update">Update</button>
         <button type="button" name="checkout" id="checkout">Checkout</button>
         <div class="final-cart-total">
-            <h3 class="price">6000THB</h3>
+            <h3 class="price">0THB</h3>
         </div>
     </div>
 

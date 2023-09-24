@@ -15,18 +15,21 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 // Check if the user is logged in
-if (!isset($_SESSION['c_email'])) {
-    header('Location: login.html'); // Redirect to login page if not logged in
+// Check if the user is logged in
+if (!isset($_SESSION['userId']) || !isset($_SESSION['userEmail'])) {
+    header('Location: login.php'); // Redirect to login page if not logged in
     exit;
 }
 
-$c_email = $_SESSION['c_email'];
+$c_id = $_SESSION['userId'];
+$c_email = $_SESSION['userEmail'];
 
 // Fetch user data from the database using the email from the session
-$stmt = $conn->prepare("SELECT * FROM customer WHERE c_email = ?");
-$stmt->bind_param("s", $c_email);
+$stmt = $conn->prepare("SELECT * FROM customer WHERE c_id = ? AND c_email = ?");
+$stmt->bind_param("is", $c_id, $c_email);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
+
 
 // If the user is a business customer, fetch the company from the businesscustomer table
 if ($user['isa_BusinessCustomer']) {
@@ -51,10 +54,10 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Dashboard</title>
+    <title>User Profile</title>
 </head>
 
-<title>FireSafety Title</title>
+<title>Customer Dashboard</title>
 
 <style>
     /* Basic styling for the page */
@@ -78,9 +81,12 @@ $conn->close();
         padding-bottom: 0px;
         font-size: 25px;
         position: fixed;
-        top: 0;
-        left: 0;
-
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        top: 150;
+        left: 50%;
+        transform: translateX(-50%);
     }
 
     .container {
@@ -146,11 +152,21 @@ $conn->close();
     <header>
         <h1>FireSafety</h1>
         <nav>
-            <a href="index.html">Home</a>
-            <a href="contact.html">Contact Us</a>
-            <a href="products.html">Products</a>
+            <a href="index.php">Home</a>
+            <a href="contact.php">Contact Us</a>
+            <a href="products.php">Products</a>
             <a href="#">Book Online</a>
-            <a href="#">Profile</a>
+            <?php if (isset($_SESSION['userType'])) : ?>
+                <a href="<?php echo $_SESSION['userType']; ?>_profile.php">Profile</a>
+                <?php if ($_SESSION['userType'] == 'employee' || $_SESSION['userType'] == 'technician') : ?>
+                    <a href="databases.php">Databases</a>
+                <?php elseif ($_SESSION['userType'] == 'businesscustomer' || $_SESSION['userType'] == 'customer') : ?>
+                    <a href="orders.php">Orders</a>
+                <?php endif; ?>
+                <a href="logout.php">Log Out</a>
+            <?php else : ?>
+                <a href="login.php">Log In</a>
+            <?php endif; ?>
         </nav>
     </header>
 
@@ -162,9 +178,10 @@ $conn->close();
             <p><strong>Email:</strong> <?php echo htmlspecialchars($user['c_email']); ?></p>
             <p><strong>Phone Number:</strong> <?php echo htmlspecialchars($user['c_phonenum']); ?></p>
             <p><strong>Address:</strong> <?php echo nl2br(htmlspecialchars($user['c_address'])); ?></p>
-            <?php if (isset($user['c_company'])) : ?>
-                <p><strong>Company:</strong> <?php echo nl2br(htmlspecialchars($user['c_company'])); ?></p>
-            <?php endif; ?>
+        </div>
+
+        <div class="big-container">
+            <p>Customer</p>
         </div>
     </body>
 </body>

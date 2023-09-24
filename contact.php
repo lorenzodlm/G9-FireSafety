@@ -1,5 +1,12 @@
+<?php
+session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,11 +18,15 @@
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
-            display: flex;           /* Make body a flex container */
-            flex-direction: column;  /* Stack children vertically */
-            justify-content: center; /* Center children vertically */
-            align-items: center;     /* Center children horizontally */
-            height: 100vh;           
+            display: flex;
+            /* Make body a flex container */
+            flex-direction: column;
+            /* Stack children vertically */
+            justify-content: center;
+            /* Center children vertically */
+            align-items: center;
+            /* Center children horizontally */
+            height: 100vh;
         }
 
         .big-container {
@@ -28,7 +39,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            
+
         }
 
         .container {
@@ -101,18 +112,28 @@
             width: 100%;
             z-index: 1000;
         }
-
     </style>
 </head>
+
 <body>
     <header>
         <h1>FireSafety</h1>
         <nav>
-            <a href="index.html">Home</a>
-            <a href="contact.html">Contact Us</a>
-            <a href="products.html">Products</a>
+            <a href="index.php">Home</a>
+            <a href="contact.php">Contact Us</a>
+            <a href="products.php">Products</a>
             <a href="#">Book Online</a>
-            <a href="login.html">Log In</a>
+            <?php if (isset($_SESSION['userType'])) : ?>
+                <a href="<?php echo $_SESSION['userType']; ?>_profile.php">Profile</a>
+                <?php if ($_SESSION['userType'] == 'employee' || $_SESSION['userType'] == 'technician') : ?>
+                    <a href="databases.php">Databases</a>
+                <?php elseif ($_SESSION['userType'] == 'businesscustomer' || $_SESSION['userType'] == 'customer') : ?>
+                    <a href="orders.php">Orders</a>
+                <?php endif; ?>
+                <a href="logout.php">Log Out</a>
+            <?php else : ?>
+                <a href="login.php">Log In</a>
+            <?php endif; ?>
         </nav>
     </header>
 
@@ -129,11 +150,14 @@
             input[type="text"],
             input[type="email"] {
                 width: 50%;
-                padding: 2px; /* Increase padding for more height */
-                margin-bottom: 20px; /* Increase margin for more separation */
-                font-size: 16px; /* Increase font size for larger text */
+                padding: 2px;
+                /* Increase padding for more height */
+                margin-bottom: 20px;
+                /* Increase margin for more separation */
+                font-size: 16px;
+                /* Increase font size for larger text */
             }
-    
+
             /* Style for labels */
             label {
                 font-weight: bold;
@@ -145,28 +169,28 @@
         <p>Get in touch by filling out the form. We’ll respond as soon we can.</p>
     </div>
 
-        <label for="first_name">First Name:</label>
-        <input type="text" id="first_name" name="first_name" required><br>
+    <label for="first_name">First Name:</label>
+    <input type="text" id="first_name" name="first_name" required><br>
 
-        <label for="last_name">Last Name:</label>
-        <input type="text" id="last_name" name="last_name" required><br>
+    <label for="last_name">Last Name:</label>
+    <input type="text" id="last_name" name="last_name" required><br>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required><br>
 
-        <input type="submit" value="Submit">
+    <input type="submit" value="Submit">
     </form>
 </body>
 
 <footer>
     <div class="contact-info">
         <p>500 Terry Francois Street, 6th Floor. San Francisco, CA 94158</p>
-    
-    <div class="opening-hours">
-        <p><strong>Opening Hours</strong></p>
-        <p>Monday - Friday<br>9:00am - 8:00pm</p>
-        <p>Saturday and Sunday<br>10:00am - 5:00pm</p>
-    </div>
+
+        <div class="opening-hours">
+            <p><strong>Opening Hours</strong></p>
+            <p>Monday - Friday<br>9:00am - 8:00pm</p>
+            <p>Saturday and Sunday<br>10:00am - 5:00pm</p>
+        </div>
 </footer>
 
 </html>

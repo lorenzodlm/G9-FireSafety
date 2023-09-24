@@ -33,8 +33,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         
         $_SESSION['c_email'] = $c_email;
-        header('Location: ' . ($isa_BusinessCustomer ? 'busUser_profile.php' : 'user_profile.php'));
-        $_SESSION['userType'] = $isa_BusinessCustomer ? 'businessCustomer' : 'customer';
+        header('Location: ' . ($isa_BusinessCustomer ? 'businesscustomer_profile.php' : 'customer_profile.php'));
+        $_SESSION['userType'] = $isa_BusinessCustomer ? 'businesscustomer' : 'customer';
         $_SESSION['isLoggedIn'] = true;
 
     } else {

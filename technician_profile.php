@@ -179,8 +179,9 @@ $conn->close();
                 <p><strong>Company:</strong> <?php echo nl2br(htmlspecialchars($user['c_company'])); ?></p>
             <?php endif; ?>
         </div>
+
         <div class="big-container">
-            <p>Employee</p>
+            <p>Technician</p>
         </div>
     </body>
 </body>

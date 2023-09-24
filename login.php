@@ -5,56 +5,70 @@ ini_set('display_errors', 1);
 
 include 'dbconnect.php';
 
-$error = '';
+$error = null;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
-    $password = $_POST['password']; 
+    $password = $_POST['password'];
 
-    // Check in the customer table
+    // Check in customer table first to get c_id
     $stmt = $conn->prepare("SELECT * FROM customer WHERE c_email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $user = $stmt->get_result()->fetch_assoc();
+    $stmt->close(); // Close the statement
 
-    if ($user) {
-        // Validate password here
-        $_SESSION['userId'] = $user['c_id'];
-        $_SESSION['userType'] = $user['isa_BusinessCustomer'] ? 'businessCustomer' : 'customer';
+    if ($user && $password == $user['c_password']) {
+        $c_id = $user['c_id'];
+
+        // Check in businesscustomer table using c_id
+        $stmtBusiness = $conn->prepare("SELECT * FROM businesscustomer WHERE c_id = ?");
+        $stmtBusiness->bind_param("i", $c_id);
+        $stmtBusiness->execute();
+        $userBusiness = $stmtBusiness->get_result()->fetch_assoc();
+        $stmtBusiness->close(); // Close the statement
+
+        if ($userBusiness) {
+            $_SESSION['userType'] = 'businesscustomer';
+            $_SESSION['userId'] = $c_id;
+            $_SESSION['userEmail'] = $user['c_email'];
+        } else {
+            $_SESSION['userType'] = 'customer';
+            $_SESSION['userId'] = $c_id;
+            $_SESSION['userEmail'] = $user['c_email'];
+        }
+        header('Location: index.php'); // Redirect to index.php
+        exit;
     } else {
-        // Check in the employee table if not found in the customer table
+        // If customer login fails, then check in employee table
         $stmt = $conn->prepare("SELECT * FROM employee WHERE e_email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $user = $stmt->get_result()->fetch_assoc();
+        $stmt->close(); // Close the statement
 
-        if ($user) {
-            // Validate password here
+        if ($user && $password == $user['e_password']) {
+            $_SESSION['userType'] = 'employee';
             $_SESSION['userId'] = $user['e_id'];
+            $_SESSION['userEmail'] = $user['e_email'];
 
-            // Check if the user is also in the technician table
+            // Check if the employee is also a technician
             $stmtTech = $conn->prepare("SELECT * FROM technician WHERE e_id = ?");
             $stmtTech->bind_param("i", $user['e_id']);
             $stmtTech->execute();
-            $technician = $stmtTech->get_result()->fetch_assoc();
-            $stmtTech->close();
-            
-            $_SESSION['userType'] = $technician ? 'technician' : 'employee';
-            
+            $userTech = $stmtTech->get_result()->fetch_assoc();
+            $stmtTech->close(); // Close the statement
+
+            if ($userTech) {
+                $_SESSION['userType'] = 'technician';
+            }
+            header('Location: index.php'); // Redirect to index.php
+            exit;
         } else {
-            $error = 'Invalid email or password';
+            $error = "Invalid email or password";
         }
     }
-
-    $stmt->close();
-
-    if ($user) {
-        header('Location: ' . $_SESSION['userType'] . '_profile.php');
-        exit;
-    }
 }
-
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -192,16 +206,16 @@ $conn->close();
     <header>
         <h1>FireSafety</h1>
         <nav>
-            <a href="index.html">Home</a>
-            <a href="contact.html">Contact Us</a>
-            <a href="products.html">Products</a>
+            <a href="index.php">Home</a>
+            <a href="contact.php">Contact Us</a>
+            <a href="products.php">Products</a>
             <a href="#">Book Online</a>
-            <a href="login.html">Log In</a>
+            <a href="login.php">Log In</a>
         </nav>
     </header>
     <div class="login-container">
         <h2>Login</h2>
-        <form action="/login" method="post">
+        <form action="" method="post">
             <label>
                 Email:
                 <input type="email" name="email" required>
@@ -212,8 +226,12 @@ $conn->close();
             </label>
             <button type="submit">Login</button>
         </form>
+        <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $error) : ?>
+            <p style="color: red;"><?php echo $error; ?></p>
+        <?php endif; ?>
         <p>Don't have an account? <a href="signup.html">Sign up</a></p>
     </div>
 </body>
 
 </html>
+<?php $conn->close(); ?>

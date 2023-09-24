@@ -3,13 +3,6 @@ session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// echo isset($_SESSION['userType']) ? $_SESSION['userType'] : 'userType Not Set';
-// echo '<br>';
-// echo isset($_SESSION['userId']) ? $_SESSION['userId'] : 'userId Not Set';
-// echo '<br>';
-// echo isset($_SESSION['userEmail']) ? $_SESSION['userEmail'] : 'userEmail Not Set';
-// echo '<br>';
-// echo 'Session ID: ' . session_id() . '<br>';
 ?>
 
 <!DOCTYPE html>
@@ -18,7 +11,7 @@ ini_set('display_errors', 1);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>FireSafety Title</title>
     <style>
         /* Basic styling for the page */
         body {
@@ -93,16 +86,6 @@ ini_set('display_errors', 1);
         nav a:hover {
             background-color: #ffffff;
         }
-
-        .top-background {
-            background: url('Assets/topbg.jpg') no-repeat center center;
-            /* Replace with your image path */
-            background-size: cover;
-            /* This will cover the entire viewport */
-            height: 650px;
-            /* Adjust based on your needs */
-            width: 100%;
-        }
     </style>
 </head>
 
@@ -115,7 +98,7 @@ ini_set('display_errors', 1);
             <a href="products.php">Products</a>
             <a href="#">Book Online</a>
             <?php if (isset($_SESSION['userType'])) : ?>
-                <a href="./<?php echo $_SESSION['userType']; ?>_profile.php">Profile</a>
+                <a href="<?php echo $_SESSION['userType']; ?>_profile.php">Profile</a>
                 <?php if ($_SESSION['userType'] == 'employee' || $_SESSION['userType'] == 'technician') : ?>
                     <a href="databases.php">Databases</a>
                 <?php elseif ($_SESSION['userType'] == 'businesscustomer' || $_SESSION['userType'] == 'customer') : ?>
@@ -128,15 +111,8 @@ ini_set('display_errors', 1);
         </nav>
     </header>
 
-    <div class="big-container">
-        <p>Protect Your Business Today!</p>
-    </div>
-
-    <div class="container">
-        <p>Different Types of Products to Cater for any Fire Risk</p>
-    </div>
-
-    <div class="top-background"></div>
 </body>
 
 </html>
+
+<?php $conn->close()?>
