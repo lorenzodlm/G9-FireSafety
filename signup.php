@@ -1,4 +1,8 @@
 <?php
+session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 include 'dbconnect.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -8,16 +12,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $c_phonenum = $_POST['c_phonenum'];
     $c_address = $_POST['c_address'];
     $c_password = $_POST['password'];
-    $is_BusinessCustomer = isset($_POST['isa_businesscustomer']) ? 1 : 0;
+    $isa_BusinessCustomer = isset($_POST['isa_BusinessCustomer']) ? 1 : 0;
 
-    $sql = "INSERT INTO users (c_firstname, c_lastname, c_email, c_phonenum, c_address, password, is_businesscustomer) VALUES ('$firstname', '$lastname', '$email', '$phonenum', '$address', '$password', '$is_businesscustomer')";
+    $stmt = $conn->prepare("INSERT INTO users (c_firstname, c_lastname, c_email, c_phonenum, c_address, c_password, isa_BusinessCustomer) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssssss", $c_firstName, $c_lastName, $c_email, $c_phonenum, $c_address, $c_password, $isa_BusinessCustomer);
 
-    if ($conn->query($sql) === TRUE) {
-        header('Location: ' . ($is_BusinessCustomer ? 'busUser_profile.php?email=' . $email : 'user_profile.php?email=' . $email));
+    if ($stmt->execute()) {
+        // Start a session to store user data temporarily
+        session_start();
+        $_SESSION['email'] = $c_email;
+        // Redirect to the appropriate page based on the user type
+        header('Location: ' . ($isa_BusinessCustomer ? 'busUser_profile.php' : 'user_profile.php'));
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "Error: " . $stmt->error;
     }
 
+    $stmt->close();
     $conn->close();
 }
-?>

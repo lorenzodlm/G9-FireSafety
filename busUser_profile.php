@@ -1,4 +1,5 @@
 <?php
+session_start();
 include 'dbconnect.php';
 
 // Assume the user is logged in and you have their email. In a real application, you would typically get this from a session variable.
@@ -11,13 +12,20 @@ $stmt->bind_param('s', $email);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Check if a user is found
-if ($result->num_rows > 0) {
-    $user = $result->fetch_assoc();
-} else {
-    die('User not found');
+// Check if the user is logged in
+if (!isset($_SESSION['email'])) {
+    header('Location: login.html'); // Redirect to login page if not logged in
+    exit;
 }
 
+$email = $_SESSION['email'];
+
+// Fetch user data from the database using the email from the session
+$stmt = $conn->prepare("SELECT * FROM users WHERE c_email = ?");
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$user = $stmt->get_result()->fetch_assoc();
+$stmt->close();
 $conn->close();
 ?>
 
