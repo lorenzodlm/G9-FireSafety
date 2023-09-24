@@ -1,33 +1,3 @@
-<?php
-session_start();
-include 'dbconnect.php';
-
-$c_email = 'user@example.com'; // Replace with the actual user email
-
-// Prepare SQL to get user information from the database
-$sql = "SELECT * FROM customer WHERE c_email = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param('s', $c_email);
-$stmt->execute();
-$result = $stmt->get_result();
-
-// Check if the user is logged in
-if (!isset($_SESSION['c_email'])) {
-    header('Location: login.html'); // Redirect to login page if not logged in
-    exit;
-}
-
-$c_email = $_SESSION['c_email'];
-
-// Fetch user data from the database using the email from the session
-$stmt = $conn->prepare("SELECT * FROM customer WHERE c_email = ?");
-$stmt->bind_param("s", $c_email);
-$stmt->execute();
-$user = $stmt->get_result()->fetch_assoc();
-$stmt->close();
-$conn->close();
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,7 +8,6 @@ $conn->close();
 </head>
 
 <title>FireSafety Title</title>
-
 <style>
     /* Basic styling for the page */
     body {

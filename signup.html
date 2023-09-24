@@ -157,16 +157,52 @@
           }
         });
       });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.querySelector("form");
+        const companyLabel = document.getElementById("companyLabel");
+        const isa_BusinessCustomerCheckbox = form.querySelector(
+          '[name="isa_BusinessCustomer"]'
+        );
+
+        // Function to toggle the visibility of the company field
+        function toggleCompanyField() {
+          companyLabel.style.display = isa_BusinessCustomerCheckbox.checked
+            ? "block"
+            : "none";
+        }
+
+        // Toggle the company field when the checkbox is changed
+        isa_BusinessCustomerCheckbox.addEventListener(
+          "change",
+          toggleCompanyField
+        );
+
+        // Initial toggle in case the checkbox is already checked when the page loads
+        toggleCompanyField();
+
+        form.addEventListener("submit", function (event) {
+          const c_password = form.querySelector('[name="c_password"]').value;
+          const confirm_password = form.querySelector(
+            '[name="confirm_password"]'
+          ).value;
+
+          if (c_password !== confirm_password) {
+            alert("Passwords do not match!");
+            event.preventDefault(); // Prevent the form submission only if passwords do not match
+          }
+        });
+      });
     </script>
 
     <form action="signup.php" method="post">
       <label>
         First Name:
-        <input type="text" name="c_firstname" required />
+        <input type="text" name="c_firstName" required />
       </label>
       <label>
         Last Name:
-        <input type="text" name="c_lastname" required />
+        <input type="text" name="c_lastName" required />
       </label>
       <label>
         Email:
@@ -191,6 +227,10 @@
       <label>
         <input type="checkbox" name="isa_BusinessCustomer" />
         Business Customer
+      </label>
+      <label id="companyLabel" style="display: none">
+        Company:
+        <input type="text" name="company" />
       </label>
       <button type="submit">Sign Up</button>
     </form>
