@@ -1,5 +1,11 @@
+<?php
+session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,11 +17,11 @@
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
-            display: flex;          
-            flex-direction: column;  
-            justify-content: center; 
-            align-items: center;     
-            height: 100vh;           
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
         .big-container {
@@ -78,16 +84,19 @@
         nav a:hover {
             background-color: #ffffff;
         }
-        
+
         .top-background {
-            background: url('topbg.jpg') no-repeat center center; /* Replace with your image path */
-            background-size: cover; /* This will cover the entire viewport */
-            height: 650px; /* Adjust based on your needs */
+            background: url('topbg.jpg') no-repeat center center;
+            /* Replace with your image path */
+            background-size: cover;
+            /* This will cover the entire viewport */
+            height: 650px;
+            /* Adjust based on your needs */
             width: 100%;
         }
-
     </style>
 </head>
+
 <body>
     <header>
         <h1>FireSafety</h1>
@@ -96,7 +105,11 @@
             <a href="contact.html">Contact Us</a>
             <a href="products.html">Products</a>
             <a href="#">Book Online</a>
-            <a href="login.html">Log In</a>
+            <?php if (isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn']) : ?>
+                <a href="<?= $_SESSION['userType'] ?>_profile.php">Profile</a>
+            <?php else : ?>
+                <a href="login.php">Log In</a>
+            <?php endif; ?>
         </nav>
     </header>
 
@@ -110,4 +123,5 @@
 
     <div class="top-background"></div>
 </body>
+
 </html>

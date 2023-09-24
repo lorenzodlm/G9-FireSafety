@@ -51,10 +51,10 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
+    <title>Employee Dashboard</title>
 </head>
 
-<title>Customer Dashboard</title>
+<title>FireSafety Title</title>
 
 <style>
     /* Basic styling for the page */
@@ -162,6 +162,9 @@ $conn->close();
             <p><strong>Email:</strong> <?php echo htmlspecialchars($user['c_email']); ?></p>
             <p><strong>Phone Number:</strong> <?php echo htmlspecialchars($user['c_phonenum']); ?></p>
             <p><strong>Address:</strong> <?php echo nl2br(htmlspecialchars($user['c_address'])); ?></p>
+            <?php if (isset($user['c_company'])) : ?>
+                <p><strong>Company:</strong> <?php echo nl2br(htmlspecialchars($user['c_company'])); ?></p>
+            <?php endif; ?>
         </div>
     </body>
 </body>

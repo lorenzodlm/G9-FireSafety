@@ -1,3 +1,62 @@
+<?php
+session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+include 'dbconnect.php';
+
+$error = '';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = $_POST['email'];
+    $password = $_POST['password']; 
+
+    // Check in the customer table
+    $stmt = $conn->prepare("SELECT * FROM customer WHERE c_email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $user = $stmt->get_result()->fetch_assoc();
+
+    if ($user) {
+        // Validate password here
+        $_SESSION['userId'] = $user['c_id'];
+        $_SESSION['userType'] = $user['isa_BusinessCustomer'] ? 'businessCustomer' : 'customer';
+    } else {
+        // Check in the employee table if not found in the customer table
+        $stmt = $conn->prepare("SELECT * FROM employee WHERE e_email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $user = $stmt->get_result()->fetch_assoc();
+
+        if ($user) {
+            // Validate password here
+            $_SESSION['userId'] = $user['e_id'];
+
+            // Check if the user is also in the technician table
+            $stmtTech = $conn->prepare("SELECT * FROM technician WHERE e_id = ?");
+            $stmtTech->bind_param("i", $user['e_id']);
+            $stmtTech->execute();
+            $technician = $stmtTech->get_result()->fetch_assoc();
+            $stmtTech->close();
+            
+            $_SESSION['userType'] = $technician ? 'technician' : 'employee';
+            
+        } else {
+            $error = 'Invalid email or password';
+        }
+    }
+
+    $stmt->close();
+
+    if ($user) {
+        header('Location: ' . $_SESSION['userType'] . '_profile.php');
+        exit;
+    }
+}
+
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,7 +65,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="styles.css">
-    <title>FireSafety Title</title>
+    <title>Login</title>
     <style>
         /* Basic styling for the page */
         body {

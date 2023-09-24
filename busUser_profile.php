@@ -1,8 +1,11 @@
 <?php
 session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 include 'dbconnect.php';
 
-$c_email = 'user@example.com'; // Replace with the actual user email
+$c_email = ''; // Replace with the actual user email
 
 // Prepare SQL to get user information from the database
 $sql = "SELECT * FROM customer WHERE c_email = ?";
@@ -24,6 +27,20 @@ $stmt = $conn->prepare("SELECT * FROM customer WHERE c_email = ?");
 $stmt->bind_param("s", $c_email);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
+
+// If the user is a business customer, fetch the company from the businesscustomer table
+if ($user['isa_BusinessCustomer']) {
+    $stmtCompany = $conn->prepare("SELECT c_company FROM businesscustomer WHERE c_id = ?");
+    $stmtCompany->bind_param("i", $user['c_id']);
+    $stmtCompany->execute();
+    $resultCompany = $stmtCompany->get_result();
+    if ($resultCompany->num_rows > 0) {
+        $company = $resultCompany->fetch_assoc();
+        $user['c_company'] = $company['c_company']; // Add c_company to the user array
+    }
+    $stmtCompany->close();
+}
+
 $stmt->close();
 $conn->close();
 ?>
@@ -34,7 +51,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
+    <title>Business Dashboard</title>
 </head>
 
 <title>FireSafety Title</title>
@@ -139,12 +156,15 @@ $conn->close();
 
     <body>
         <div id="user-info">
+            <p><strong>Customer ID:</strong> <?php echo htmlspecialchars($user['c_id']); ?></p>
             <p><strong>First Name:</strong> <?php echo htmlspecialchars($user['c_firstName']); ?></p>
             <p><strong>Last Name:</strong> <?php echo htmlspecialchars($user['c_lastName']); ?></p>
             <p><strong>Email:</strong> <?php echo htmlspecialchars($user['c_email']); ?></p>
             <p><strong>Phone Number:</strong> <?php echo htmlspecialchars($user['c_phonenum']); ?></p>
             <p><strong>Address:</strong> <?php echo nl2br(htmlspecialchars($user['c_address'])); ?></p>
-            <!-- Display other user information as needed -->
+            <?php if (isset($user['c_company'])) : ?>
+                <p><strong>Company:</strong> <?php echo nl2br(htmlspecialchars($user['c_company'])); ?></p>
+            <?php endif; ?>
         </div>
     </body>
 </body>
