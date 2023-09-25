@@ -2,14 +2,6 @@
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-
-// Check if the user is logged in
-if (!isset($_SESSION['userId']) || !isset($_SESSION['userEmail'])) {
-    header('Location: login.php'); // Redirect to login page if not logged in
-    exit;
-}
-
-include 'dbconnect.php';
 ?>
 
 <!DOCTYPE html>
@@ -114,6 +106,46 @@ include 'dbconnect.php';
             transform: scale(1.2);
             overflow: hidden;
             border-radius: 2%;
+        }
+
+        #image-1 {
+            background-image: url('Assets/1kgCO2.jpg');
+        }
+
+        #image-2 {
+            background-image: url('Assets/3kgCO2.jpg');
+        }
+
+        #image-3 {
+            background-image: url('Assets/6kgCO2.jpg');
+        }
+
+        #image-4 {
+            background-image: url('Assets/1kgABCDryPowder.jpg');
+        }
+
+        #image-5 {
+            background-image: url('Assets/3kgABCDryPowder.jpg');
+        }
+
+        #image-6 {
+            background-image: url('Assets/6kgABCDryPowder.jpg');
+        }
+
+        #image-7 {
+            background-image: url('Assets/9kgABCDryPowder.jpg');
+        }
+
+        #image-8 {
+            background-image: url('Assets/6LWaterFire.jpg');
+        }
+
+        #image-9 {
+            background-image: url('Assets/9LWaterFire.jpg');
+        }
+
+        #image-10 {
+            background-image: url('Assets/smokedetector1.jpg');
         }
 
         .text-box {
@@ -366,8 +398,9 @@ include 'dbconnect.php';
         </nav>
     </header>
     <script>
-        let cart = <?php echo json_encode($initialCartItems); ?>;
+        let cart = [];
 
+        // Function to add a product to the cart
         function addToCart(productId, productName, productPrice, productImage, quantity) {
             // Check if product already exists in cart
             const existingProduct = cart.find(item => item.productId === productId);
@@ -407,18 +440,10 @@ include 'dbconnect.php';
         function removeFromCart(productId) {
             const index = cart.findIndex(item => item.productId === productId);
             if (index !== -1) {
-                if (cart[index].quantity > 1) {
-                    // Decrease the quantity if more than 1
-                    cart[index].quantity -= 1;
-                } else {
-                    // Remove the item from the cart if quantity is 1
-                    cart.splice(index, 1);
-                }
+                cart.splice(index, 1);
             }
-            updateCartDisplay();
         }
 
-        // Event Listener for Add to Cart buttons
         document.addEventListener('DOMContentLoaded', function() {
             const buttons = document.querySelectorAll('button[id$="-button"]');
             buttons.forEach(button => {
@@ -428,7 +453,7 @@ include 'dbconnect.php';
                     const productName = productElement.querySelector('.item').textContent;
                     const productPrice = parseFloat(productElement.querySelector('.price').textContent.replace('THB', ''));
                     const productImage = productElement.querySelector('.images').style.backgroundImage.split('"')[1];
-                    const quantity = parseInt(productElement.querySelector('input[type="text"]').value) || 1; // Default to 1 if input is empty or invalid
+                    const quantity = parseInt(productElement.querySelector('input[type="text"]').value);
                     addToCart(productId, productName, productPrice, productImage, quantity);
                 });
             });
@@ -488,55 +513,157 @@ include 'dbconnect.php';
                 totalPrice.textContent = `${item.productPrice * item.quantity}THB`;
                 totalDiv.appendChild(totalPrice);
 
-                const removeButton = document.createElement('button');
-                removeButton.classList.add('remove');
-                removeButton.textContent = 'x';
-                removeButton.addEventListener('click', function() {
-                    removeFromCart(item.productId);
-                });
-                totalDiv.appendChild(removeButton); 
-
                 cartItem.appendChild(productDiv);
                 cartItem.appendChild(priceDiv);
                 cartItem.appendChild(quantityDiv);
                 cartItem.appendChild(totalDiv);
 
-                cartContent.insertBefore(cartItem, tableHeading.nextSibling); // Insert cartItem into cartContent here
+                cartContent.insertBefore(cartItem, tableHeading.nextSibling);
+
+                const removeButton = document.createElement('button');
+                removeButton.classList.add('remove');
+                removeButton.textContent = 'x';
+                removeButton.addEventListener('click', function() {
+                    removeFromCart(item.productId);
+                    updateCartDisplay();
+                });
+                totalDiv.appendChild(removeButton);
             });
         }
-
-        document.addEventListener('DOMContentLoaded', function() {
-        renderCartItems();
     </script>
 </body>
 
 <div class="listing-section">
-    <?php
-    $sql = "SELECT item_id, item_name, item_price FROM item";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        // output data of each row
-        while ($row = $result->fetch_assoc()) {
-            echo '<div class="product">';
-            echo '<div class="image-box">';
-            // Selects the image corresponding to Row in Table
-            echo '<div class="images" id="image-' . $row["item_id"] . '" style="background-image: url(\'Assets/' . $row["item_name"] . '.jpg\')"></div>';
-            echo '</div>';
-            echo '<div class="text-box">';
-            echo '<h2 class="item">' . $row["item_name"] . '</h2>';
-            echo '<h3 class="price">' . $row["item_price"] . 'THB</h3>';
-            echo '<p class="description">' . $row["item_id"] . '</p>';
-            echo '<label for="item-' . $row["item_id"] . '-quantity">Quantity:</label>';
-            echo '<input type="text" name="item-' . $row["item_id"] . '-quantity" id="item-' . $row["item_id"] . '-quantity" value="1">';
-            echo '<button type="button" name="item-' . $row["item_id"] . '-button" id="item-' . $row["item_id"] . '-button">Add to Cart</button>';
-            echo '</div>';
-            echo '</div>';
-        }
-    } else {
-        echo "0 results";
-    }
-    ?>
+    <div class="product">
+        <div class="image-box">
+            <div class="images" id="image-1"></div>
+        </div>
+        <div class="text-box">
+            <h2 class="item">Co2 1 KG</h2>
+            <h3 class="price">1000THB</h3>
+            <p class="description">Rated for Class B fires</p>
+            <label for="item-1-quantity">Quantity:</label>
+            <input type="text" name="item-1-quantity" id="item-1-quantity" value="1">
+            <button type="button" name="item-1-button" id="item-1-button">Add to Cart</button>
+        </div>
+    </div>
+    <div class="product">
+        <div class="image-box">
+            <div class="images" id="image-2"></div>
+        </div>
+        <div class="text-box">
+            <h2 class="item">Co2 3 KG</h2>
+            <h3 class="price">1500THB</h3>
+            <p class="description">Rated for Class B fires</p>
+            <label for="item-2-quantity">Quantity:</label>
+            <input type="text" name="item-2-quantity" id="item-2-quantity" value="1">
+            <button type="button" name="item-2-button" id="item-2-button">Add to Cart</button>
+        </div>
+    </div>
+    <div class="product">
+        <div class="image-box">
+            <div class="images" id="image-3"></div>
+        </div>
+        <div class="text-box">
+            <h2 class="item">Co2 6 KG</h2>
+            <h3 class="price">2000THB</h3>
+            <p class="description">Rated for Class B fires</p>
+            <label for="item-3-quantity">Quantity:</label>
+            <input type="text" name="item-3-quantity" id="item-3-quantity" value="1">
+            <button type="button" name="item-3-button" id="item-3-button">Add to Cart</button>
+        </div>
+    </div>
+    <div class="product">
+        <div class="image-box">
+            <div class="images" id="image-4"></div>
+        </div>
+        <div class="text-box">
+            <h2 class="item">Dry Powder 1 KG</h2>
+            <h3 class="price">1000THB</h3>
+            <p class="description">Rated for Class ABC fires</p>
+            <label for="item-4-quantity">Quantity:</label>
+            <input type="text" name="item-4-quantity" id="item-4-quantity" value="1">
+            <button type="button" name="item-4-button" id="item-4-button">Add to Cart</button>
+        </div>
+    </div>
+    <div class="product">
+        <div class="image-box">
+            <div class="images" id="image-5"></div>
+        </div>
+        <div class="text-box">
+            <h2 class="item">Dry Powder 3 KG</h2>
+            <h3 class="price">2000THB</h3>
+            <p class="description">Rated for Class ABC fires</p>
+            <label for="item-5-quantity">Quantity:</label>
+            <input type="text" name="item-5-quantity" id="item-5-quantity" value="1">
+            <button type="button" name="item-5-button" id="item-5-button">Add to Cart</button>
+        </div>
+    </div>
+    <div class="product">
+        <div class="image-box">
+            <div class="images" id="image-6"></div>
+        </div>
+        <div class="text-box">
+            <h2 class="item">Dry Powder 6 KG</h2>
+            <h3 class="price">3000THB</h3>
+            <p class="description">Rated for Class ABC fires</p>
+            <label for="item-6-quantity">Quantity:</label>
+            <input type="text" name="item-6-quantity" id="item-6-quantity" value="1">
+            <button type="button" name="item-6-button" id="item-6-button">Add to Cart</button>
+        </div>
+    </div>
+    <div class="product">
+        <div class="image-box">
+            <div class="images" id="image-7"></div>
+        </div>
+        <div class="text-box">
+            <h2 class="item">Dry Powder 9 KG</h2>
+            <h3 class="price">4000THB</h3>
+            <p class="description">Rated for Class ABC fires</p>
+            <label for="item-7-quantity">Quantity:</label>
+            <input type="text" name="item-7-quantity" id="item-7-quantity" value="1">
+            <button type="button" name="item-7-button" id="item-7-button">Add to Cart</button>
+        </div>
+    </div>
+    <div class="product">
+        <div class="image-box">
+            <div class="images" id="image-8"></div>
+        </div>
+        <div class="text-box">
+            <h2 class="item">Water 6 L</h2>
+            <h3 class="price">3000THB</h3>
+            <p class="description">Rated for Class A fires</p>
+            <label for="item-8-quantity">Quantity:</label>
+            <input type="text" name="item-8-quantity" id="item-8-quantity" value="1">
+            <button type="button" name="item-8-button" id="item-8-button">Add to Cart</button>
+        </div>
+    </div>
+    <div class="product">
+        <div class="image-box">
+            <div class="images" id="image-9"></div>
+        </div>
+        <div class="text-box">
+            <h2 class="item">Water 9 L</h2>
+            <h3 class="price">4000THB</h3>
+            <p class="description">Rated for Class A fires</p>
+            <label for="item-9-quantity">Quantity:</label>
+            <input type="text" name="item-9-quantity" id="item-9-quantity" value="1">
+            <button type="button" name="item-9-button" id="item-9-button">Add to Cart</button>
+        </div>
+    </div>
+    <div class="product">
+        <div class="image-box">
+            <div class="images" id="image-10"></div>
+        </div>
+        <div class="text-box">
+            <h2 class="item">Smoke Detector</h2>
+            <h3 class="price">1500THB</h3>
+            <p class="description">Photoelectric Smoke Detector</p>
+            <label for="item-10-quantity">Quantity:</label>
+            <input type="text" name="item-10-quantity" id="item-10-quantity" value="1">
+            <button type="button" name="item-10-button" id="item-10-button">Add to Cart</button>
+        </div>
+    </div>
 </div>
 
 <div class="cart-section">
@@ -560,10 +687,9 @@ include 'dbconnect.php';
         </div>
     </div>
 
+    <div class="keep-shopping">
+        <button type="button" name="keep-shopping" id="keep-shopping">Keep Shopping</button>
+    </div>
 </div>
 
 </html>
-
-<?php
-$conn->close();
-?>

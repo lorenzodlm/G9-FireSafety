@@ -48,9 +48,9 @@ include 'dbconnect.php';
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            margin-top: 150px;
+            margin-top: 1300px;
             padding: 20px;
-            padding-top: 1800px;
+            padding-top: 1300px;
             font-size: 30px;
         }
 

@@ -1,12 +1,5 @@
-<?php
-session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-?>
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,11 +11,11 @@ ini_set('display_errors', 1);
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            display: flex;           /* Make body a flex container */
+            flex-direction: column;  /* Stack children vertically */
+            justify-content: center; /* Center children vertically */
+            align-items: center;     /* Center children horizontally */
+            height: 100vh;           
         }
 
         .big-container {
@@ -31,18 +24,21 @@ ini_set('display_errors', 1);
             padding: 20px;
             padding-top: 100px;
             padding-bottom: 0px;
-            font-size: 72px;
-            top: 0;
+            font-size: 25px;
             position: fixed;
+            top: 0;
+            left: 0;
+            
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            margin-top: 150px;
             padding: 20px;
-            padding-top: 1800px;
-            font-size: 30px;
+            padding-top: 0px;
+            font-size: 20px;
+            /* top: 0; */
+            /* position: fixed; */
         }
 
         header {
@@ -84,6 +80,13 @@ ini_set('display_errors', 1);
         nav a:hover {
             background-color: #ffffff;
         }
+        
+        .top-background {
+            background: url('topbg.jpg') no-repeat center center; /* Replace with your image path */
+            background-size: cover; /* This will cover the entire viewport */
+            height: 650px; /* Adjust based on your needs */
+            width: 100%;
+        }
 
         .text-box {
             width: 100%;
@@ -91,31 +94,6 @@ ini_set('display_errors', 1);
             border: 0.01em solid #dddbdb;
             border-radius: 0 0 2% 2%;
             padding: 1em;
-        }
-
-        .button-container {
-            position: fixed;
-            top: 150px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            z-index: 1000;
-            padding: 10px;
-        }
-
-        .button {
-            display: inline-block;
-            margin: 0 15px;
-            padding: 15px 30px;
-            text-decoration: none;
-            background-color: #FFDC86;
-            color: #000;
-            border-radius: 7.5px;
-            transition: background-color 0.3s;
-        }
-
-        .button:hover {
-            background-color: #ffffff;
         }
 
         footer {
@@ -130,11 +108,39 @@ ini_set('display_errors', 1);
             width: 100%;
             z-index: 1000;
         }
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+
+        table th {
+            background-color: #f2f2f2;
+        }
+
     </style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Orders</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <header>
+<header>
         <h1>FireSafety</h1>
         <nav>
             <a href="index.php">Home</a>
@@ -142,7 +148,7 @@ ini_set('display_errors', 1);
             <a href="products.php">Products</a>
             <a href="book_checkup.php">Book Online</a>
             <?php if (isset($_SESSION['userType'])) : ?>
-                <a href="<?php echo $_SESSION['userType']; ?>_profile.php">Profile</a>
+                <a href="./<?php echo $_SESSION['userType']; ?>_profile.php">Profile</a>
                 <?php if ($_SESSION['userType'] == 'employee' || $_SESSION['userType'] == 'technician') : ?>
                     <a href="databases.php">Databases</a>
                 <?php elseif ($_SESSION['userType'] == 'businesscustomer' || $_SESSION['userType'] == 'customer') : ?>
@@ -154,35 +160,14 @@ ini_set('display_errors', 1);
             <?php endif; ?>
         </nav>
     </header>
+    <main>
+        <div class="order-list">
+            <?php
+            
+            
 
-    <div class="button-container">
-        <a href="orders.php" class="button">Orders</a>
-        <a href="#" class="button">CheckUp</a>
-    </div>
-
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Contact Submission</title>
-        <style>
-            /* Style for larger text input fields */
-            input[type="text"],
-            input[type="email"] {
-                width: 50%;
-                padding: 2px;
-                /* Increase padding for more height */
-                margin-bottom: 20px;
-                /* Increase margin for more separation */
-                font-size: 16px;
-                /* Increase font size for larger text */
-            }
-
-            /* Style for labels */
-            label {
-                font-weight: bold;
-            }
-        </style>
-    </head>
+            ?>
+        </div>
+    </main>
 </body>
-
 </html>

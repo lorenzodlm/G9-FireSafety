@@ -3,9 +3,6 @@ session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-echo isset($_SESSION['userType']) ? $_SESSION['userType'] : 'userType Not Set';
-echo '<br>';
-
 include 'dbconnect.php';
 
 // Check if the user is logged in
@@ -31,27 +28,58 @@ if ($_SESSION['userType'] == 'customer' || $_SESSION['userType'] == 'businesscus
     $stmt->close();
 }
 
-// Handle form submission
+// Form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $item_id = $_POST['item_id'];
     $check_date = $_POST['check_date'];
     $check_time = $_POST['check_time'];
-    $c_address = $_POST['c_address']; // Overwrite the fetched c_address with the one from the form if needed
+    $c_address = $_POST['c_address'];
 
-    // Prepare an SQL statement to insert data into the checkup table
-    $stmt = $conn->prepare("INSERT INTO checkup (c_id, item_id, check_date, check_time, c_address) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("iisss", $c_id, $item_id, $check_date, $check_time, $c_address);
+    // Validate item_id before inserting into checkup table
+    $stmt = $conn->prepare("SELECT item_id FROM item WHERE item_id = ?");
+    $stmt->bind_param("i", $item_id); // "i" = integer  
 
-    if ($stmt->execute()) {
-        echo "Check-up scheduled successfully!";
+    $stmt->execute();
+    $stmt->store_result();
+
+    // Check if the item_id exists in the item table
+    if ($stmt->num_rows > 0) {
+        // item_id exists, proceed with the insert operation in the checkup table
+        $stmt->close();
+
+        $stmt = $conn->prepare("SELECT e_id FROM technician 
+                                WHERE e_id IN (SELECT e_id FROM employee) 
+                                ORDER BY RAND() LIMIT 1");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $e_id = $row['e_id'];
+        } else {
+            echo "No available technician.";
+            $conn->close();
+            exit;
+        }
+        $stmt->close();
+
+        // Insert into checkup table with default check_status as 'to Check'
+        $stmt = $conn->prepare("INSERT INTO checkup (c_id, e_id, item_id, check_status, check_date, check_time, c_address) 
+                                VALUES (?, ?, ?, 'to Check', ?, ?, ?)");
+        $stmt->bind_param("iissss", $c_id, $e_id, $item_id, $check_date, $check_time, $c_address);
+
+        if ($stmt->execute()) {
+            echo "Check-up scheduled successfully!";
+        } else {
+            echo "Error: " . $stmt->error;
+        }
+
+        $stmt->close();
     } else {
-        echo "Error: " . $stmt->error;
+        // item_id does not exist in the item table
+        echo "Invalid item_id. Please select a valid item.";
     }
-
-    $stmt->close();
 }
 
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -218,12 +246,26 @@ $conn->close();
         <p>Check out our availability and book the date and time that works for you</p>
     </div>
 
+    <?php
+    // Fetch all items from the item table
+    $stmt = $conn->prepare("SELECT item_id, item_name FROM item");
+    $stmt->execute();
+    $items = $stmt->get_result();
+    $stmt->close();
+    ?>
+
     <form action="" method="post">
         <label for="c_id">Customer ID:</label>
         <input type="text" id="c_id" name="c_id" value="<?php echo $c_id; ?>" required readonly><br>
 
-        <label for="item_id">Item ID (Ordered from Fire Safety website):</label>
-        <input type="text" id="item_id" name="item_id" required><br>
+        <label for="item_id">Item:</label>
+        <select id="item_id" name="item_id" required>
+            <?php while ($item = $items->fetch_assoc()) : ?>
+                <option value="<?php echo $item['item_id']; ?>">
+                    <?php echo $item['item_name'] . " (" . $item['item_id'] . ")"; ?>
+                </option>
+            <?php endwhile; ?>
+        </select><br>
 
         <label for="check_date">Select Date:</label>
         <input type="date" id="check_date" name="check_date" required><br>
@@ -232,10 +274,14 @@ $conn->close();
         <input type="time" id="check_time" name="check_time" required><br>
 
         <label for="c_address">Customer Address:</label>
-        <input type="text" id="c_address" name="c_address" value="<?php echo $c_address; ?>" required><br>
+        <input type="text" id="c_address" name="c_address" value="<?php echo $c_address; ?>" required readonly><br>
 
         <button type="submit">Schedule Appointment</button>
     </form>
 </body>
 
 </html>
+
+<?php
+$conn->close();
+?>

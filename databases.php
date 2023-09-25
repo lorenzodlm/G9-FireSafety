@@ -226,12 +226,12 @@ include 'dbconnect.php';
         // Table for Check Up
         // Check if the user is an employee or technician
         if ($_SESSION['userType'] == 'employee' || $_SESSION['userType'] == 'technician') {
-            // SQL to join customer, orders, order_items, and item tables
-            $sql = "SELECT checkup.checkup_id, customer.c_id, employee.e_id, item.item_id
-                    FROM customer
-                    JOIN orders ON customer.c_id = orders.c_id
-                    JOIN order_items ON orders.order_id = order_items.order_id
-                    JOIN item ON order_items.item_id = item.item_id";
+            // SQL to join checkup, employee, customer, and item tables
+            $sql = "SELECT checkup.checkup_id, checkup.e_id, checkup.item_id, checkup.check_date, checkup.check_time, customer.c_id, customer.c_address, checkup.check_status
+            FROM checkup
+            JOIN employee ON checkup.e_id = employee.e_id
+            JOIN customer ON checkup.c_id = customer.c_id
+            JOIN item ON checkup.item_id = item.item_id";
 
             $result = $conn->query($sql);
 
@@ -239,32 +239,27 @@ include 'dbconnect.php';
                 echo "<h2>Check Ups</h2>";
                 echo "<table border='1'>";
                 echo "<tr>";
-                echo "<th>Customer ID</th>";
-                echo "<th>First Name</th>";
-                echo "<th>Last Name</th>";
-                echo "<th>Email</th>";
-                echo "<th>Order ID</th>";
-                echo "<th>Item Name</th>";
+                echo "<th>Checkup ID</th>";
+                echo "<th>Employee ID</th>";
                 echo "<th>Item ID</th>";
-                echo "<th>Quantity</th>";
-                echo "<th>Price THB</th>";
-                echo "<th>Total Price THB</th>";
+                echo "<th>Check Date</th>";
+                echo "<th>Check Time</th>";
+                echo "<th>Customer ID</th>";
+                echo "<th>Customer Address</th>";
+                echo "<th>Check Status</th>";
                 echo "</tr>";
 
                 // Fetch and display records from the joined tables
                 while ($row = $result->fetch_assoc()) {
                     echo "<tr>";
-                    echo "<td>{$row['c_id']}</td>";
-                    echo "<td>{$row['c_firstName']}</td>";
-                    echo "<td>{$row['c_lastName']}</td>";
-                    echo "<td>{$row['c_email']}</td>";
-                    echo "<td>{$row['order_id']}</td>";
-                    echo "<td>{$row['item_name']}</td>";
+                    echo "<td>{$row['checkup_id']}</td>";
+                    echo "<td>{$row['e_id']}</td>";
                     echo "<td>{$row['item_id']}</td>";
-                    echo "<td>{$row['quantity']}</td>";
-                    echo "<td>{$row['item_price']}</td>";
-                    $totalPrice = $row['quantity'] * $row['item_price']; // Calculate Total Price
-                    echo "<td>{$totalPrice}</td>"; // Display Total Price
+                    echo "<td>{$row['check_date']}</td>";
+                    echo "<td>{$row['check_time']}</td>";
+                    echo "<td>{$row['c_id']}</td>";
+                    echo "<td>{$row['c_address']}</td>";
+                    echo "<td>{$row['check_status']}</td>";
                     echo "</tr>";
                 }
 
