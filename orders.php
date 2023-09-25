@@ -3,6 +3,7 @@ session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,11 +39,10 @@ ini_set('display_errors', 1);
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            margin-top: 150px;
             padding: 20px;
-            padding-top: 0px;
+            padding-top: 1800px;
             font-size: 30px;
-            /* top: 0; */
-            /* position: fixed; */
         }
 
         header {
@@ -84,6 +84,52 @@ ini_set('display_errors', 1);
         nav a:hover {
             background-color: #ffffff;
         }
+
+        .text-box {
+            width: 100%;
+            float: left;
+            border: 0.01em solid #dddbdb;
+            border-radius: 0 0 2% 2%;
+            padding: 1em;
+        }
+
+        .button-container {
+            position: fixed;
+            top: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 1000;
+            padding: 10px;
+        }
+
+        .button {
+            display: inline-block;
+            margin: 0 15px;
+            padding: 15px 30px;
+            text-decoration: none;
+            background-color: #FFDC86;
+            color: #000;
+            border-radius: 7.5px;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #ffffff;
+        }
+
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: bottom;
+            background-color: #FFDC86;
+            padding: 20px 20px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
     </style>
 </head>
 
@@ -109,6 +155,34 @@ ini_set('display_errors', 1);
         </nav>
     </header>
 
+    <div class="button-container">
+        <a href="orders.php" class="button">Orders</a>
+        <a href="#" class="button">CheckUp</a>
+    </div>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Contact Submission</title>
+        <style>
+            /* Style for larger text input fields */
+            input[type="text"],
+            input[type="email"] {
+                width: 50%;
+                padding: 2px;
+                /* Increase padding for more height */
+                margin-bottom: 20px;
+                /* Increase margin for more separation */
+                font-size: 16px;
+                /* Increase font size for larger text */
+            }
+
+            /* Style for labels */
+            label {
+                font-weight: bold;
+            }
+        </style>
+    </head>
 </body>
 
 </html>

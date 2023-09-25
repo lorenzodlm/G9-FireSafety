@@ -5,41 +5,28 @@ ini_set('display_errors', 1);
 
 include 'dbconnect.php';
 
-$c_email = ''; // Replace with the actual user email
+$e_email = ''; // Replace with the actual user email
 
 // Prepare SQL to get user information from the database
-$sql = "SELECT * FROM customer WHERE c_email = ?";
+$sql = "SELECT * FROM employee WHERE e_email = ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param('s', $c_email);
+$stmt->bind_param('s', $e_email);
 $stmt->execute();
 $result = $stmt->get_result();
 
 // Check if the user is logged in
-if (!isset($_SESSION['c_email'])) {
+if (!isset($_SESSION['userId']) || !isset($_SESSION['userEmail'])) {
     header('Location: login.php'); // Redirect to login page if not logged in
     exit;
 }
 
-$c_email = $_SESSION['c_email'];
+$e_email = $_SESSION['userEmail'];
 
 // Fetch user data from the database using the email from the session
-$stmt = $conn->prepare("SELECT * FROM customer WHERE c_email = ?");
-$stmt->bind_param("s", $c_email);
+$stmt = $conn->prepare("SELECT * FROM employee WHERE e_email = ?");
+$stmt->bind_param("s", $e_email);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
-
-// If the user is a business customer, fetch the company from the businesscustomer table
-if ($user['isa_BusinessCustomer']) {
-    $stmtCompany = $conn->prepare("SELECT c_company FROM businesscustomer WHERE c_id = ?");
-    $stmtCompany->bind_param("i", $user['c_id']);
-    $stmtCompany->execute();
-    $resultCompany = $stmtCompany->get_result();
-    if ($resultCompany->num_rows > 0) {
-        $company = $resultCompany->fetch_assoc();
-        $user['c_company'] = $company['c_company']; // Add c_company to the user array
-    }
-    $stmtCompany->close();
-}
 
 $stmt->close();
 $conn->close();
@@ -74,12 +61,12 @@ $conn->close();
         padding: 20px;
         padding-top: 100px;
         padding-bottom: 0px;
-        font-size: 25px;
+        font-size: 32px;
         position: fixed;
         display: flex;
         justify-content: center;
-        align-items: center;
-        top: 150;
+        align-items: top;
+        top: 100px;
         left: 50%;
         transform: translateX(-50%);
     }
@@ -167,14 +154,14 @@ $conn->close();
 
     <body>
         <div id="user-info">
-            <p><strong>Customer ID:</strong> <?php echo htmlspecialchars($user['c_id']); ?></p>
-            <p><strong>First Name:</strong> <?php echo htmlspecialchars($user['c_firstName']); ?></p>
-            <p><strong>Last Name:</strong> <?php echo htmlspecialchars($user['c_lastName']); ?></p>
-            <p><strong>Email:</strong> <?php echo htmlspecialchars($user['c_email']); ?></p>
-            <p><strong>Phone Number:</strong> <?php echo htmlspecialchars($user['c_phonenum']); ?></p>
-            <p><strong>Address:</strong> <?php echo nl2br(htmlspecialchars($user['c_address'])); ?></p>
-            <?php if (isset($user['c_company'])) : ?>
-                <p><strong>Company:</strong> <?php echo nl2br(htmlspecialchars($user['c_company'])); ?></p>
+            <?php if ($user) : ?>
+                <p><strong>Employee ID:</strong> <?php echo htmlspecialchars($user['e_id'] ?? ''); ?></p>
+                <p><strong>First Name:</strong> <?php echo htmlspecialchars($user['e_firstName'] ?? ''); ?></p>
+                <p><strong>Last Name:</strong> <?php echo htmlspecialchars($user['e_lastName'] ?? ''); ?></p>
+                <p><strong>Email:</strong> <?php echo htmlspecialchars($user['e_email'] ?? ''); ?></p>
+                <p><strong>Phone Number:</strong> <?php echo htmlspecialchars($user['e_phonenum'] ?? ''); ?></p>
+            <?php else : ?>
+                <p>No user information available</p>
             <?php endif; ?>
         </div>
         <div class="big-container">

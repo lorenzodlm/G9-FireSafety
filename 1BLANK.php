@@ -2,56 +2,6 @@
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-
-echo isset($_SESSION['userType']) ? $_SESSION['userType'] : 'userType Not Set';
-echo '<br>';
-
-include 'dbconnect.php';
-
-// Check if the user is logged in
-if (!isset($_SESSION['userId']) || !isset($_SESSION['userEmail'])) {
-    header('Location: login.php'); // Redirect to login page if not logged in
-    exit;
-}
-
-$c_id = '';
-$c_address = '';
-
-// Fetch c_id and c_address from the customer or businesscustomer table based on the userId in the session
-if ($_SESSION['userType'] == 'customer' || $_SESSION['userType'] == 'businesscustomer') {
-    $stmt = $conn->prepare("SELECT c_id, c_address FROM customer WHERE c_id = ?");
-    $stmt->bind_param("i", $_SESSION['userId']);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $c_id = $row['c_id'];
-        $c_address = $row['c_address'];
-    }
-    $stmt->close();
-}
-
-// Handle form submission
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $item_id = $_POST['item_id'];
-    $check_date = $_POST['check_date'];
-    $check_time = $_POST['check_time'];
-    $c_address = $_POST['c_address']; // Overwrite the fetched c_address with the one from the form if needed
-
-    // Prepare an SQL statement to insert data into the checkup table
-    $stmt = $conn->prepare("INSERT INTO checkup (c_id, item_id, check_date, check_time, c_address) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("iisss", $c_id, $item_id, $check_date, $check_time, $c_address);
-
-    if ($stmt->execute()) {
-        echo "Check-up scheduled successfully!";
-    } else {
-        echo "Error: " . $stmt->error;
-    }
-
-    $stmt->close();
-}
-
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -60,7 +10,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book Online</title>
+    <title>FireSafety Title</title>
     <style>
         /* Basic styling for the page */
         body {
@@ -69,13 +19,9 @@ $conn->close();
             padding: 0;
             background-color: #f4f4f4;
             display: flex;
-            /* Make body a flex container */
             flex-direction: column;
-            /* Stack children vertically */
             justify-content: center;
-            /* Center children vertically */
             align-items: center;
-            /* Center children horizontally */
             height: 100vh;
         }
 
@@ -85,24 +31,18 @@ $conn->close();
             padding: 20px;
             padding-top: 100px;
             padding-bottom: 0px;
-            font-size: 32px;
+            font-size: 72px;
+            top: 0;
             position: fixed;
-            display: flex;
-            justify-content: center;
-            align-items: top;
-            top: 100px;
-            left: 50%;
-            transform: translateX(-50%);
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            margin-top: 150px;
             padding: 20px;
-            padding-top: 0px;
-            font-size: 20px;
-            /* top: 0; */
-            /* position: fixed; */
+            padding-top: 1800px;
+            font-size: 30px;
         }
 
         header {
@@ -153,6 +93,31 @@ $conn->close();
             padding: 1em;
         }
 
+        .button-container {
+            position: fixed;
+            top: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 1000;
+            padding: 10px;
+        }
+
+        .button {
+            display: inline-block;
+            margin: 0 15px;
+            padding: 15px 30px;
+            text-decoration: none;
+            background-color: #FFDC86;
+            color: #000;
+            border-radius: 7.5px;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #ffffff;
+        }
+
         footer {
             display: flex;
             justify-content: space-between;
@@ -177,7 +142,7 @@ $conn->close();
             <a href="products.php">Products</a>
             <a href="book_checkup.php">Book Online</a>
             <?php if (isset($_SESSION['userType'])) : ?>
-                <a href="./<?php echo $_SESSION['userType']; ?>_profile.php">Profile</a>
+                <a href="<?php echo $_SESSION['userType']; ?>_profile.php">Profile</a>
                 <?php if ($_SESSION['userType'] == 'employee' || $_SESSION['userType'] == 'technician') : ?>
                     <a href="databases.php">Databases</a>
                 <?php elseif ($_SESSION['userType'] == 'businesscustomer' || $_SESSION['userType'] == 'customer') : ?>
@@ -190,21 +155,26 @@ $conn->close();
         </nav>
     </header>
 
-    <div class="big-container">
-        <h2>Book Check-up Online</h2>
+    <div class="button-container">
+        <a href="#" class="button">General</a>
+        <a href="#" class="button">All Databases</a>
     </div>
 
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Contact Submission</title>
         <style>
             /* Style for larger text input fields */
             input[type="text"],
             input[type="email"] {
                 width: 50%;
                 padding: 2px;
+                /* Increase padding for more height */
                 margin-bottom: 20px;
+                /* Increase margin for more separation */
                 font-size: 16px;
+                /* Increase font size for larger text */
             }
 
             /* Style for labels */
@@ -213,29 +183,6 @@ $conn->close();
             }
         </style>
     </head>
-
-    <div class="container">
-        <p>Check out our availability and book the date and time that works for you</p>
-    </div>
-
-    <form action="" method="post">
-        <label for="c_id">Customer ID:</label>
-        <input type="text" id="c_id" name="c_id" value="<?php echo $c_id; ?>" required readonly><br>
-
-        <label for="item_id">Item ID (Ordered from Fire Safety website):</label>
-        <input type="text" id="item_id" name="item_id" required><br>
-
-        <label for="check_date">Select Date:</label>
-        <input type="date" id="check_date" name="check_date" required><br>
-
-        <label for="check_time">Select Time:</label>
-        <input type="time" id="check_time" name="check_time" required><br>
-
-        <label for="c_address">Customer Address:</label>
-        <input type="text" id="c_address" name="c_address" value="<?php echo $c_address; ?>" required><br>
-
-        <button type="submit">Schedule Appointment</button>
-    </form>
 </body>
 
 </html>
