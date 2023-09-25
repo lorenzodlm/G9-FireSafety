@@ -54,10 +54,8 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
+    <title>Customer Profile</title>
 </head>
-
-<title>Customer Dashboard</title>
 
 <style>
     /* Basic styling for the page */
@@ -155,7 +153,7 @@ $conn->close();
             <a href="index.php">Home</a>
             <a href="contact.php">Contact Us</a>
             <a href="products.php">Products</a>
-            <a href="#">Book Online</a>
+            <a href="book_checkup.php">Book Online</a>
             <?php if (isset($_SESSION['userType'])) : ?>
                 <a href="<?php echo $_SESSION['userType']; ?>_profile.php">Profile</a>
                 <?php if ($_SESSION['userType'] == 'employee' || $_SESSION['userType'] == 'technician') : ?>

@@ -2,7 +2,7 @@
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-
+// DEBUGGING
 // echo isset($_SESSION['userType']) ? $_SESSION['userType'] : 'userType Not Set';
 // echo '<br>';
 // echo isset($_SESSION['userId']) ? $_SESSION['userId'] : 'userId Not Set';
@@ -113,7 +113,7 @@ ini_set('display_errors', 1);
             <a href="index.php">Home</a>
             <a href="contact.php">Contact Us</a>
             <a href="products.php">Products</a>
-            <a href="#">Book Online</a>
+            <a href="book_checkup.php">Book Online</a>
             <?php if (isset($_SESSION['userType'])) : ?>
                 <a href="./<?php echo $_SESSION['userType']; ?>_profile.php">Profile</a>
                 <?php if ($_SESSION['userType'] == 'employee' || $_SESSION['userType'] == 'technician') : ?>

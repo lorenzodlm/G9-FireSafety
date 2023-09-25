@@ -209,7 +209,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <a href="index.php">Home</a>
             <a href="contact.php">Contact Us</a>
             <a href="products.php">Products</a>
-            <a href="#">Book Online</a>
+            <a href="book_checkup.php">Book Online</a>
             <a href="login.php">Log In</a>
         </nav>
     </header>

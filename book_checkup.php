@@ -2,6 +2,36 @@
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
+echo isset($_SESSION['userType']) ? $_SESSION['userType'] : 'userType Not Set';
+echo '<br>';
+
+include 'dbconnect.php';
+
+// Check if the user is logged in
+if (!isset($_SESSION['userId']) || !isset($_SESSION['userEmail'])) {
+    header('Location: login.php'); // Redirect to login page if not logged in
+    exit;
+}
+
+$c_id = '';
+$c_address = '';
+
+// Fetch c_id and c_address from the customer or businesscustomer table based on the userId in the session
+if ($_SESSION['userType'] == 'customer' || $_SESSION['userType'] == 'businesscustomer') {
+    $stmt = $conn->prepare("SELECT c_id, c_address FROM customer WHERE c_id = ?");
+    $stmt->bind_param("i", $_SESSION['userId']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $c_id = $row['c_id'];
+        $c_address = $row['c_address'];
+    }
+    $stmt->close();
+}
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -10,7 +40,7 @@ ini_set('display_errors', 1);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FireSafety Title</title>
+    <title>Book Online</title>
     <style>
         /* Basic styling for the page */
         body {
@@ -35,11 +65,14 @@ ini_set('display_errors', 1);
             padding: 20px;
             padding-top: 100px;
             padding-bottom: 0px;
-            font-size: 25px;
+            font-size: 32px;
             position: fixed;
-            top: 0;
-            left: 0;
-
+            display: flex;
+            justify-content: center;
+            align-items: top;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .container {
@@ -124,7 +157,7 @@ ini_set('display_errors', 1);
             <a href="products.php">Products</a>
             <a href="book_checkup.php">Book Online</a>
             <?php if (isset($_SESSION['userType'])) : ?>
-                <a href="<?php echo $_SESSION['userType']; ?>_profile.php">Profile</a>
+                <a href="./<?php echo $_SESSION['userType']; ?>_profile.php">Profile</a>
                 <?php if ($_SESSION['userType'] == 'employee' || $_SESSION['userType'] == 'technician') : ?>
                     <a href="databases.php">Databases</a>
                 <?php elseif ($_SESSION['userType'] == 'businesscustomer' || $_SESSION['userType'] == 'customer') : ?>
@@ -138,24 +171,20 @@ ini_set('display_errors', 1);
     </header>
 
     <div class="big-container">
-        <h2>Contact</h2>
+        <h2>Book Check-up Online</h2>
     </div>
 
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Contact Submission</title>
         <style>
             /* Style for larger text input fields */
             input[type="text"],
             input[type="email"] {
                 width: 50%;
                 padding: 2px;
-                /* Increase padding for more height */
                 margin-bottom: 20px;
-                /* Increase margin for more separation */
                 font-size: 16px;
-                /* Increase font size for larger text */
             }
 
             /* Style for labels */
@@ -166,31 +195,27 @@ ini_set('display_errors', 1);
     </head>
 
     <div class="container">
-        <p>Get in touch by filling out the form. We’ll respond as soon we can.</p>
+        <p>Check out our availability and book the date and time that works for you</p>
     </div>
 
-    <label for="first_name">First Name:</label>
-    <input type="text" id="first_name" name="first_name" required><br>
+    <form action="" method="post">
+        <label for="c_id">Customer ID:</label>
+        <input type="text" id="c_id" name="c_id" value="<?php echo $c_id; ?>" required readonly><br>
 
-    <label for="last_name">Last Name:</label>
-    <input type="text" id="last_name" name="last_name" required><br>
+        <label for="item_id">Item ID (Ordered from Fire Safety website):</label>
+        <input type="text" id="item_id" name="item_id" required><br>
 
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required><br>
+        <label for="check_date">Select Date:</label>
+        <input type="date" id="check_date" name="check_date" required><br>
 
-    <input type="submit" value="Submit">
+        <label for="check_time">Select Time:</label>
+        <input type="time" id="check_time" name="check_time" required><br>
+
+        <label for="c_address">Customer Address:</label>
+        <input type="text" id="c_address" name="c_address" value="<?php echo $c_address; ?>" required><br>
+
+        <button type="submit">Schedule Appointment</button>
     </form>
 </body>
-
-<footer>
-    <div class="contact-info">
-        <p>500 Terry Francois Street, 6th Floor. San Francisco, CA 94158</p>
-
-        <div class="opening-hours">
-            <p><strong>Opening Hours</strong></p>
-            <p>Monday - Friday<br>9:00am - 8:00pm</p>
-            <p>Saturday and Sunday<br>10:00am - 5:00pm</p>
-        </div>
-</footer>
 
 </html>
